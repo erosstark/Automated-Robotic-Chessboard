@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apresentação: Tabuleiro de Xadrez Robótico</title>
+    <!-- Script de Renderização de LaTeX para Navegadores (MathJax) -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- Fontes Acadêmicas Clássicas -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Renderizador de Fórmulas Matemáticas LaTeX -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es6/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --nogueira: #2A1B15; /* Marrom escuro para capas e detalhes */
+            --marfim: #FAF6F0;    /* Creme suave para fundo principal */
+            --ouro: #B38F4D;      /* Ouro metálico para contornos e destaques */
+            --ebano: #1D1410;     /* Madeira preta para contraste secundário */
+            --textodark: #2D201C; /* Escuro legível para textos gerais */
+            --textolight: #FAF6F0;/* Claro legível para fundos escuros */
+            --cinzacard: #F3EFE9; /* Fundo para os blocos de fotos e códigos */
+            --shadow: 0 12px 28px rgba(0,0,0,0.25);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            background-color: #120e0c;
+            font-family: 'Lora', serif;
+            color: var(--textodark);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Container 16:9 Centralizado */
+        .presentation-viewport {
+            width: 1600px;
+            height: 900px;
+            background-color: var(--marfim);
+            position: relative;
+            overflow: hidden;
+            border: 4px double var(--ouro);
+            box-shadow: var(--shadow);
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Variação de Capas e Slides Gerais */
+        .presentation-viewport.dark-theme {
+            background-color: var(--nogueira);
+            color: var(--textolight);
+        }
+        .slide-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 50px 80px;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-in-out;
+            z-index: 1;
+        }
+
+        .slide.active {
+            opacity: 1;
+            pointer-events: auto;
+            z-index: 2;
+        }
+
+        /* Cabeçalhos Clássicos */
+        .slide-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--ouro);
+            padding-bottom: 12px;
+            margin-bottom: 30px;
+            z-index: 2;
+        }
+
+        .slide-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 44px;
+            font-weight: 700;
+            color: var(--nogueira);
+            letter-spacing: 0.5px;
+        }
+
+        .dark-theme .slide-title {
+            color: var(--ouro);
+        }
+
+        .slide-category {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 15px;
+            color: var(--ouro);
+            border: 1px solid var(--ouro);
+            padding: 3px 10px;
+            border-radius: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Painéis de Conteúdo */
+        .slide-content {
+            display: flex;
+            gap: 50px;
+            flex: 1;
+            align-items: center;
+            z-index: 2;
+        }
+
+        .text-panel {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .text-panel h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 30px;
+            color: var(--nogueira);
+            margin-bottom: 5px;
+        }
+
+        .dark-theme .text-panel h3 {
+            color: var(--ouro);
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        li {
+            font-size: 24px;
+            line-height: 1.45;
+            color: var(--textodark);
+            margin-bottom: 10px;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .dark-theme li {
+            color: #ddd;
+        }
+
+        li::before {
+            content: "\f441"; /* Ícone de Peão no FontAwesome */
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 2px;
+            font-size: 14px;
+            color: var(--ouro);
+        }
+
+        li strong {
+            font-family: 'Playfair Display', serif;
+            color: var(--nogueira);
+            font-weight: 700;
+        }
+
+        .dark-theme li strong {
+            color: var(--textolight);
+        }
+
+        /* Destaques estilo pergaminho */
+        .highlight-box {
+            background-color: var(--cinzacard);
+            border-left: 3px solid var(--ouro);
+            padding: 12px 18px;
+            font-size: 18px;
+            color: var(--textodark);
+            line-height: 1.4;
+            font-style: italic;
+        }
+
+        /* Bloco de Mídia para Imagens Reais */
+        .media-panel {
+            flex: 1;
+            height: 100%;
+            max-height: 900px;
+            background-color: var(--cinzacard);
+            border: 1px solid var(--ouro);
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 20px;
+            text-align: center;
+            box-shadow: inset 0 0 15px rgba(42,27,21,0.05);
+        }
+
+        .media-panel i {
+            font-size: 40px;
+            color: var(--ouro);
+            margin-bottom: 15px;
+        }
+
+        .media-panel span {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--nogueira);
+            line-height: 1.4;
+        }
+
+        /* Slide de Capa Clássico */
+        .slide.capa {
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 100px;
+        }
+
+        .slide.capa h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 58px;
+            font-weight: 700;
+            color: var(--ouro);
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .slide.capa p {
+            font-size: 21px;
+            color: var(--textolight);
+            margin-bottom: 60px;
+            font-style: italic;
+            border-bottom: 1px solid var(--ouro);
+            padding-bottom: 20px;
+            width: 80%;
+        }
+
+        .slide.capa .meta {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: var(--ouro);
+            display: flex;
+            gap: 40px;
+            margin-bottom: 8px;
+        }
+        .slide-number {
+    position: absolute;
+    bottom: 20px;
+    right: 30px;
+    font-size: 16px;
+    color: #888;
+    font-weight: bold;
+}
+    </style>
+</head>
+<body>
+
+    <div class="presentation-viewport" id="presentation-viewport">
+
+        <!-- Slide 1: Capa (Escuro) -->
+        <div class="slide capa active" data-theme="dark">
+            <h1>Xadrez Robótico</h1>
+            <p>Tabuleiro Automatizado por Comando de Voz em Tempo Real</p>
+            <div class="meta">
+                <span><i class="fa-solid fa-chess"></i> Projeto de LAB II</span>
+                <span><i class="fa-solid fa-university"></i> UFRJ</span> 
+            </div>
+            <div class="meta" style="margin-top: 50px;">
+                <span><i class="fa-solid fa-users"></i> Eros Moreira Ferreira</span>
+            </div>
+            <div class="meta">
+                <span><i class="fa-solid fa-users"></i>  Alícia Lopes </span>
+            </div>
+        </div>
+
+        <div class="slide capa" data-theme="dark">
+            <h1>Introdução</h1>
+        </div>
+        <!-- Slide 2: Introdução e Motivação -->
+        <div class="slide" data-theme="light">
+            <div class="slide-header">
+                <h2 class="slide-title">Introdução e Motivação</h2>
+                <div class="slide-category">Conceito</div>
+            </div>
+            <div class="slide-content">
+                <div class="text-panel">
+                    <h3>O Imaginário Mecatrônico</h3>
+                    <ul>
+                        <li><strong>Origem Histórica:</strong> Tabuleiros capazes de movimentar suas próprias peças evocam conceitos que habitam o imaginário desde o século XII na mitologia celta.</li>
+                        <li><strong>Cultura Popular:</strong> Elemento lúdico imortalizado como o xadrez de bruxo ou mágico na franquia cinematográfica de Harry Potter.</li>
+                        <li><strong>Acessibilidade:</strong> O avanço tecnológico recente e a crescente facilidade de acesso a componentes eletrônicos tornaram sua execução viável e reprodutível.</li>
+                    </ul>
+                    <div class="highlight-box">
+                        A utilidade prática estende-se do entretenimento casual ao desenvolvimento de ferramentas pedagógicas voltadas para a motivação de jovens.
+                    </div>
+                </div>
+                <div class="media-panel">
+                    <img src="imagens/harry_potter.png" alt="Cena do filme Harry Potter em que Harry e Ron jogando xadrez mágico apenas pela fala" class = "slide-image">
+                    <p>Cena do filme Harry Potter em que Harry e Ron jogando xadrez mágico apenas pela fala"</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 3: Ideia Inicial -->
+
+        <div class="slide" data-theme="light">
+            <div class="slide-header">
+                <h2 class="slide-title"> Ideia Inicial</h2>
+                <div class="slide-category">Projeto</div>
+            </div>
+            <div class="slide-content">
+                <div class="text-panel">
+                    <h3> Principais Componentes e Funcionamento </h3>
+                    <ul>
+                        <li><strong>Fala e Gerenciamento do Jogo:</strong> Feito em python e rodando inteiramente em um computador externo<li>
+                        <li><strong>Movimentação das Peças:</strong> Controlada por um microcontrolador Arduino, que recebe comandos do computador via comunicação serial.</li>
+                        <li><strong>Parte Mecânica:</strong> Motores de passo movimentam independemente os eixos X e Y, enquanto um servo motor controla o atuador vertical com a garra magnética.</li>
+                        <li><strong>Acoplamento das Peças</strong> Cada peça possui um imã em sua base, permitindo que o atuador magnético a levante e a transporte para a casa de destino.</li>
+                        <li><strong>Modos de Jogo:</strong> O tabuleiro poderia ser usado para jogar contra o computador ou contra outro jogador humano que estivesse online.</li>
+                    </ul>
+                    <div class="highlight-box">
+                        Colocar sensores em cada casa permitiria que o tabuleiro reconhecesse a posição das peças ao serem movimetadas manualmente, mas isso aumentaria significativamente a complexidade do projeto.
+                    </div>
+                </div>
+                <div class="media-panel">
+                    <img src="imagens/render1.jpg" alt="Imagem renderizada de um modelo 3d do tabuleiro robótico" class = "slide-image" width = "90%" >
+                    <img src="imagens/render2.png" alt="Imagem renderizada de um modelo 3d do tabuleiro robótico" class = "slide-image" width = "30%">
+                    <p>Modelo 3d do tabuleiro feita no Fusion360 (Render).<p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide capa" data-theme="dark">
+            <h1>Software</h1>
+        </div>
+        <!-- Slide 4: Arquitetura de Software -->
+        <div class="slide" data-theme="light">
+            <div class="slide-header">
+                <h2 class="slide-title">Arquitetura de Software</h2>
+                <div class="slide-category">Integração do código</div>
+            </div>
+            <div class="slide-content">
+                <div class="text-panel">
+                    <h3>Abordagem Modular</h3>
+                    <ul>
+                        <li><strong>Esquematização Coesa:</strong> Divisão em cinco componentes lógicos bem delimitados e com testes facilitados.</li>
+                        <li><strong>Simplicidade Lógica:</strong> O maior esforço do projeto esteve concentrado na integração de bibliotecas maduras e na costura dos subsistemas.</li>
+                        <li><strong>Isolamento de Erros:</strong> A separação das camadas garante testes unitários e prevenção de falhas de hardware e software.</li>
+                    </ul>
+                    <div class="highlight-box">
+                        Fluxo Geral: Captura de Voz -> Processamento Lógico -> Cálculo de Rota -> Comunicação Serial -> Controle Físico.
+                    </div>
+                </div>
+                <div class="media-panel">
+                    <img src = "imagens/integracao.png" class = "slide-image">
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Mapeamento do Tabuleiro Expandido (tabuleiro.py) -->
+        <div class="slide" data-theme="light">
+            <div class="slide-header">
+                <h2 class="slide-title">Mapeamento Físico</h2>
+                <div class="slide-category">tabuleiro.py</div>
+            </div>
+            <div class="slide-content">
+                <div class="text-panel">
+                    <h3>A Grade de Coordenadas</h3>
+                    <ul>
+                        <li><strong>Matriz Expandida:</strong> Tabuleiro modelado matematicamente como uma malha estendida de $37 \times 37$ nós no pandas.</li>
+                        <li><strong>Canais de Descarte:</strong> Colunas exclusivas localizadas nas bordas (E0 e D2) para o posicionamento de peças capturadas.</li>
+                        <li><strong>Prevenção de Colisões:</strong> Mapeamento do espaço físico para garantir que as peças movam entre as demais de forma segura.</li>
+                    </ul>
+                </div>
+                <div class="media-panel">
+                    <img src="imagens/tabuleiro_matriz.png" alt="Matriz da grade de coordenadas do tabuleiro expandido" class = "slide-image" >
+                    <p>Matriz das grade do tabuleiro expandid.o</p>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 6: Reconhecimento de Voz (speech.py) -->
+        <div class="slide" data-theme="light">
+            <div class="slide-header">
+                <h2 class="slide-title">Reconhecimento de Voz</h2>
+                <div class="slide-category">speech.py</div>
+            </div>
+            <div class="slide-content">
+                <div class="text-panel">
+                    <h3>Processamento Local de Áudio</h3>
+                    <ul>
+                        <li><strong>Whisper da OpenAI:</strong> Processamento de áudio executado localmente na CPU do computador através da biblioteca faster-whisper.</li>
+                        <li><strong>Filtro de Ativação (Wake Word):</strong> Utilização do comando "tabuleiro" para filtrar e ignorar ruídos ambientais ou conversas paralelas.</li>
+                        <li><strong>Expressões Regulares:</strong> Varredura de strings para localizar padrões de casas (ex: e4, f3) e mapear as peças ditas em português.</li>
+                    </ul>
+                    <div class="highlight-box">
+                        O script de voz gerencia o contexto do microfone de forma assíncrona, mantendo o barramento calibrado contra oscilações de ruído.
+                    </div>
+                </div>
+                <div class="media-panel">
+                    <img src = "imagens/speech.png" class = "slide-image">
+                    <p>Print do terminal exibindo os textos do speech.py</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Lógica e Motor de Jogo (play.py) -->
+        <div class="slide" data-theme="light">
+            <div class="slide-header">
+                <h2 class="slide-title">Lógica e Motor de Jogo</h2>
+                <div class="slide-category">play.py</div>
+            </div>
+            <div class="slide-content">
+                <div class="text-panel">
+                    <h3>Coordenação Lógica</h3>
+                    <ul>
+                        <li><strong>python-chess:</strong> Gerenciamento completo do estado lógico do jogo e validação das regras oficiais do tabuleiro.</li>
+                        <li><strong>Motor Stockfish:</strong> Conexão local ao motor de análises por meio do protocolo UCI para gerar as contrajogadas em tempo real.</li>
+                        <li><strong>Programação Assíncrona:</strong> Implementação com a biblioteca asyncio para evitar travamentos da interface de voz durante processamentos paralelos.</li>
+                    </ul>
+                </div>
+                <div class="media-panel">
+
+                    <img src = "imagens/stockfish.png" class = "slide-image">
+                    <img src = "imagens//stockfish3.png" class = "slide-image">
+                    <img src = imagens/stockfish2.png class = "slide-image">
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Planejador de Rotas Inteligente (path.py) -->
+        <div class="slide" data-theme="light">
+            <div class="slide-header">
+                <h2 class="slide-title">Planejamento de Rotas</h2>
+                <div class="slide-category">path.py</div>
+            </div>
+            <div class="slide-content">
+                <div class="text-panel">
+                    <h3>A* Adaptado</h3>
+                    <ul>
+                        <li><strong>TurnPenalizingAStarFinder:</strong> Algoritmo customizado que impõe penalidade a mudanças bruscas de direção.</li>
+                        <li><strong>Movimentação Retilínea:</strong> Força o traçado de caminhos retos e lineares, prevenindo colisões físicas com as bases das peças vizinhas.</li>
+                        <li><strong>Deslocamento por Vão:</strong> Trajetória calculada para guiar o atuador exatamente pela linha divisória das casas do tabuleiro.</li>
+                    </ul>
+                    <div class="highlight-box">
+                        Uma etapa subsequente de otimização vetorial elimina nós colineares redundantes, transmitindo ao hardware apenas os vértices das curvas.
+                    </div>
+                </div>
+                <div class="media-panel">
+                    <img src = "imagens/rota.png" class = "slide-image">
+                    <p> Os * são os nós do caminho calculado pelo algoritmo A* adaptado.</p>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Slide 9: Protocolo de Comunicação Serial -->
+        <div class="slide" data-theme="light">
+            <div class="slide-header">
+                <h2 class="slide-title">Protocolo de Comunicação</h2>
+                <div class="slide-category">Arduino.cpp</div>
+            </div>
+            <div class="slide-content">
+                <div class="text-panel">
+                    <h3>Handshake Síncrono</h3>
+                    <ul>
+                        <li><strong>Restrição de Buffer:</strong> Limite físico de 64 bytes do buffer de recepção serial do Arduino contornado pelo envio de um ponto por vez.</li>
+                        <li><strong>READY_FOR_POINTS:</strong> Sinalização inicial do microcontrolador indicando que os drivers foram ativados e estão prontos.</li>
+                        <li><strong>POINT_OK:</strong> Sincronização ponto a ponto; a coordenada da curva seguinte só é transmitida após a confirmação da anterior.</li>
+                        <li><strong>Máquina de Estados:</strong> Comportamento do sistema chaveado de forma instantânea através de comandos seriais simples (P, C, H).</li>
+                    </ul>
+                    <div class="highlight-box">
+                        Caso a conexão seja perdida, o play.py entra no modo simulação, sem causar interrupção na partida.
+                    </div>
+                </div>
+                <div class="media-panel">
+                    <img src = "imagens/logica.png" class = "slide-image">
+                    <p>Comunicação entre o play.py e o Arduino.</p>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class ="slide capa" data-theme="dark">
+            <h1>Hardware</h1>
+        </div>
+        <!-- Slide 11: Esquematização Inicial do Circuito -->
+        <div class="slide" data-theme="light">
+            <div class="slide-header">
+                <h2 class="slide-title">Esquematização Inicial do Circuito</h2>
+                <div class="slide-category">Eletrônica</div>
+            </div>
+            <div class="slide-content">
+                <div class="text-panel">
+                    <h3>Drivers e Motores</h3>
+                    <ul>
+                        <li><strong>Fonte Dedicada:</strong> Distribuição de energia isolada dividindo os 12V para os motores e servo.</li>
+                        <li><strong>Proteção dos Drivers:</strong> Capacitores de desacoplamento de $100 \mu F$</li> 
+                        <li><strong>Estado dos Motores:</strong> Enable sempre ativo (holding).</li>
+                        <li><strong>Drivers:</strong> LM2209 para controle dos motores de passos (silenciosos e com feedback de corrente, porém caros) </li>
+                    </ul>
+                </div>
+                <div class="media-panel">
+                    <img src = "imagens/circuito1.png" class = "slide-image">
+                    <p>Esquemático do circuito inicial.</p>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 12: Desenvolvimento do Circuito -->
+        <div class="slide" data-theme="light">
+            <div class="slide-header">
+                <h2 class="slide-title">Desenvolvimento do Circuito</h2>
+                <div class="slide-category">Eletrônica</div>
+            </div>
+            <div class="slide-content">
+                <div class="text-panel">
+                    <h3>Circuito Final e Soldagem</h3>
+                    <ul>
+                        <li><strong>Regulador de Tensão Linear:</strong> Substitui o stepdown na alimentação do servo.</li>
+                        <li><strong>Drivers A4988:</strong> Substituem os LM2209, com custo reduzido e maior disponibilidade no mercado.</li>
+                        <li><strong>Configuração de Microstepping:</strong> Ajuste físico dos pinos dos drivers A4988 para movimentos silenciosos e de alta precisão.</li>
+                        <li><strong>Sinalização do Circuito:</strong> LED para indicar visualmente a atividade do circuito (para evitar manuseio indevido).</li>
+                        <li><strong>Bluetooth:</strong> O circuito foi projetado pensando na utilização de um modulo HC-05 para a comunicação com o computador.</li>
+                    </ul>
+                </div>
+                <div class="media-panel">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <img src = "imagens/circuito3.jpeg" width = "100%">
+                    <img src = "imagens/a4988.jpg" width = "100%">
+                    <img src = "imagens/circuito2.jpg" width = "100%">
+                    <img src = "imagens/circuito1.jpg" width = "100%"> 
+                    </div>
+                    <p> Circuito final e foto da placa de prototipagem com os drivers A4988.</p>
+                    </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Desafios Eletrônicos : Diagnóstico e Ruídos -->
+        <div class="slide" data-theme="light">
+            <div class="slide-header">
+                <h2 class="slide-title">Desafios Eletrônicos</h2>
+                <div class="slide-category">ELETRônica</div>
+            </div>
+            <div class="slide-content">
+                <div class="text-panel">
+                    <h3>Comportamentos Inesperados e Depuração</h3>
+                    <ul>
+                        <li><strong>Drivers Danificados:</strong> Mau funcionamento em 3 dos 5 drivers disponíveis no início, (talvez) por sobrecorrentes e manipulação indevida.</li>
+                        <li><strong>Uso do Osciloscópio:</strong> Identificação de falha pela ausência de pulso nas portas de saída, as quais exibiam sinal contínuo.</li>
+                        <li><strong>Instabilidade na Comunicação:</strong> O bluetooth se mostrou uma decisão terrivel devido a instabilidade de pareamento crônica com o Windows 11. O cabo USB foi a escolha final.</li>
+                        <li><strong>Aquecimento:</strong> Em estado de repouso, os motores NEMA 17 permaneciam energizados com corrente de holding, dissipando calor excessivo.</li>
+                        <li><strong>Solução por Firmware:</strong> Mapeamento do pino de Enable, cortando a corrente de excitação assim que o carrinho atinge o repouso.</li>
+                    </ul>
+                    <div class="highlight-box">
+                        A soldagem dos componentes foi um desafio devido ao pouco espaço. O uso de caneta para indicar as trilhas e facilitar a visualização dificultou a fixação da solda na perfboard.
+                    </div>
+                </div>
+                <div class="media-panel">
+                    <img src = "imagens/ociloscopio_motor.jpg"  width = "60%">
+                    <img src = "imagens/ociloscopio.JPG" width = "60%">
+                    <p>Bancada de teste e exemplo do uso do osciloscópio para diagnosticar falhas nos drivers.</p>
+                </div>
+            </div>
+        </div>
+        <div class = "slide capa" data-theme="dark">
+            <h1>Mecânica</h1>
+        </div>
+        <!-- Slide 14: Mecânica Cartesiana e Eixos -->
+        <div class="slide" data-theme="light">
+            <div class="slide-header">
+                <h2 class="slide-title">Configuração Cartesiana</h2>
+                <div class="slide-category">Mecânica</div>
+            </div>
+            <div class="slide-content">
+                <div class="text-panel">
+                    <h3>Cinemática de Eixos Opostos</h3>
+                    <ul>
+                        <li><strong>Motores Fixos:</strong> Posicionados nas quinas opostas da estrutura para reduzir a inércia mecânica de massa móvel.</li>
+                        <li><strong>Montagem Sincronizada:</strong> Correias operando em alturas distintas no canto de retorno.</li>
+                        <li><strong>Alinhamento Crítico:</strong> O paralelismo precisa ser exato; qualquer desalinhamento gera torque e travamento imediato por fricção nos trilhos.</li>
+                    </ul>
+                    <div class="highlight-box">
+                        Vantagem de manter baixa inércia de massa móvel e centro de gravidade fixo no centro do tabuleiro.
+                    </div>
+                </div>
+                <div class="media-panel">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <img src = "imagens/motor1.jpg" width = "80%">
+                    <img src = "imagens/motor2.jpg" width = "80%">
+                    </div>
+                    <img src = "imagens/motores.jpg " width = "80%" style = "margin-top:10px;">
+                    <p>Foto do motor de passo NEMA 17 e detalhes da montagem dos motores</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Fabricação Digital: Trilhos e Carrinhos 3D -->
+        <div class="slide" data-theme="light">
+            <div class="slide-header">
+                <h2 class="slide-title">Guias de Deslocamento</h2>
+                <div class="slide-category">Fabricação Digital</div>
+            </div>
+            <div class="slide-content">
+                <div class="text-panel">
+                    <h3>Cunhas 45° e Rolamentos 608zz</h3>
+                    <ul>
+                        <li><strong>Trilhos Inclinados:</strong> Guias impressas em 3D simulando o perfil mecânico comercial V-slot.</li>
+                        <li><strong>Rolamentos de Esferas:</strong> Modelo 608zz rígido correndo por contato direto sob as superfícies inclinadas.</li>
+                        <li><strong>Carrinho Deslizante: </strong> Estrutura impressa em 3D com alojamento para os rolamentos e fixação da barra transversal de ferro.</li>
+                        <li><strong>Carrinho para o Servo:</strong> Estrutura impressa em 3D com alojamento para o servo motor e fixação do atuador vertical.</li>
+                    </ul>
+                    <div class="highlight-box">
+                        O projeto do carrinho deslizante apresentou falhas por ter apenas dois pontos de contato com o trilho.
+                    </div>    
+                </div>
+                <div class="media-panel">
+                        <div style="display:flex; gap:10px; justify-content:center;">
+                        <img src = "imagens/testestrilhos.jpg" width = "40%">
+                        <img src = "imagens/carrinhos.jpg" width = "40%">
+                        </div>
+                    <img src = "imagens/carrinho_trilho.jpg" width = "70%" style = "margin-top:10px;">
+                        <div style = "display:flex; gap:10px; justify-content:center; margin-top:10px;">
+                        <img src = "imagens/testescarrinhos.jpg" width = "40%">
+                        <img src = "imagens/carrinhoservo.jpg" width = "40%">
+
+                      </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 16: Gabinete em MDF e Tolerâncias de Montagem -->
+        <div class="slide" data-theme="light">
+            <div class="slide-header">
+                <h2 class="slide-title">Estrutura e Tolerâncias</h2>
+                <div class="slide-category">Estrutura</div>
+            </div>
+            <div class="slide-content">
+                <div class="text-panel">
+                    <h3>Gabinete em MDF 6mm</h3>
+                    <ul>
+                        <li><strong>Corte a Laser:</strong> Oscilações de potência do laser exigiram passagens múltiplas, aumentando o kerf (canal de queima).</li>
+                        <li><strong>Encaixes Frouxos:</strong> O kerf excessivo resultou em juntas estruturais frouxas, deixando os trilhos desalinhados e causando travamentos.</li> 
+                        <li><strong>Cantoneiras de Reforço:</strong> Instalação manual de cantoneiras impressas em 3d em cantos críticos para restabelecer a rigidez estrutural.</li>
+                    </ul>
+                </div>
+                <div class="media-panel">
+                    <img src = "imagens/cortelaser.jpeg" width = "80%" style = "margin-bottom:10px;">
+                    <img src = "imagens/imperfeicoes.jpg" width = "60%" >
+                </div>
+            </div>
+        </div>
+        <!-- Slide 17: A Solução de Engenharia: Eixo Flutuante -->
+        <div class="slide" data-theme="light">
+            <div class="slide-header">
+                <h2 class="slide-title">O Eixo Flutuante</h2>
+                <div class="slide-category">Design de Tolerâncias</div>
+            </div>
+            <div class="slide-content">
+                <div class="text-panel">
+                    <h3>Absorção de Imprecisões e Graus de Liberdade</h3>
+                    <ul>
+                        <li><strong>O Problema:</strong> Empenamentos milimétricos no gabinete de MDF e imperfeições em emendas de trilho colado travavam os eixos rígidos.</li>
+                        <li><strong>A Solução:</strong> Retirada de restrição rígida em uma das extremidades da barra transversal de ferro.</li>
+                        <li><strong>Compensação Dinâmica:</strong> O eixo desliza axialmente livre para dentro e fora do carrinho no percurso, adaptando-se às variações de largura.</li>
+                        <li><strong>Estabilização Rotacional:</strong> Redesenho do carrinho com um terceiro rolamento para prevenir torções causadas pelo tensionamento.</li>
+                    </ul>
+                    <div class="highlight-box">
+                        Infelizmente o eixo flutuante introduziu outro problema: a barra transversal flutuante não é mais capaz de manter o paralelismo exato entre os eixos, o que causa torções e travamentos em alguns trechos, além da perda de precisão.
+                    </div>
+                </div>
+                <div class="media-panel">
+                        <div style = "display:flex; gap:10px; justify-content:center">
+                        <img src = "imagens/novocarrinho1.jpg" width = "50%">
+                        <img src = "imagens/novocarrinho2.jpg" width = "50%">
+                        </div>
+                        <img src = "imagens/encaixetorto.jpg" width = "90%" style = "margin-top:10px;">
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Slide 18: Atuador Vertical e Garras Magnéticas -->
+        <div class="slide" data-theme="light">
+            <div class="slide-header">
+                <h2 class="slide-title">Atuador Vertical</h2>
+                <div class="slide-category">Garra Magnétia</div>
+            </div>
+            <div class="slide-content">
+                <div class="text-panel">
+                    <h3>Pinhão e Cremalheira com Servo</h3>
+                    <ul>
+                        <li><strong>Conversão Cinemática:</strong> Transformação compacta e robusta de movimento rotativo do servo em deslocamento linear vertical.</li>
+                        <li><strong>Acoplamento:</strong> O imã é fixo na cremalheira, permitindo que o servo acople e desacople da peça para a movimentação.</li>
+                        <li><strong>Precisão: </strong> A impressão da cremalheira em 3D com certa folga para permitir o deslocamento sem travamentos gerou uma perda de precisão do movimento.</li>
+                    </ul>
+                </div>
+                <div class="media-panel">
+                    <div style = "display:flex; gap:10px; justify-content:center">
+                    <img src = "imagens/carrinhoservo.jpg" width = "50%">
+                    <img src = "imagens/carrinhoservo2.jpg" width = "50%">
+                </div>
+                <img src = "imagens/gapservo.jpg" width = "60%" style = "margin-top:10px;">
+                <p>Detalhes do atuador vertical com o servo motor e a garra magnética.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 19: Peças do Jogo -->
+        <div class="slide" data-theme="light">
+            <div class="slide-header">
+                <h2 class="slide-title">Desenho das Peças e Casas do Tabuleiro</h2>
+                <div class="slide-category">Elementos do Jogo</div>
+            </div>
+            <div class="slide-content">
+                <div class="text-panel">
+                    <h3>Parafuso Allen M6 como Lastro</h3>
+                    <ul>
+                        <li><strong>O Problema:</strong> Peças plásticas impressas leves demais e sofriam por forças de atração magnética de peças vizinhas.</li>
+                        <li><strong>Ganho de Massa:</strong> Inserção de parafusos de Allen M6 no núcleo oco interno de cada peça.</li>
+                        <li><strong>Nicho do Ímã:</strong> A cavidade sextavada interna do parafuso forneceu o encaixe perfeito para embutir o pequeno ímã de neodímio de $4\,\text{mm} \times 2\,\text{mm}$.</li>
+                        <h3>Tampa Cortada a Laser</h3>   
+                        <li><strong>Acrílico Transparente:</strong>Confere uma estética moderna e permite a visualização dos mecanismos internos.</li>
+                        <li><strong>Cortadora a Laser:</strong> Funcionamento instável causou falhas no desenho das casas.</li>
+
+                    </ul>
+                    <div class="highlight-box">
+                        O parafuso de metal deixou as peças com uma estética interessante.
+
+                    </div>
+                </div>
+                <div class="media-panel">
+                    <div style = "display:flex; gap:10px; justify-content:center">
+                        <img src = "imagens/peca1.jpg" width = "50%" >
+                    <img src = "imagens/pecaima.jpg" width = "50%">
+                    </div>
+                    <img src = "imagens/tampa1.jpg" width = "80%" style = "margin-top: 10px">
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 20: Calibração Física e Cinemática -->
+        <div class="slide" data-theme="light">
+            <div class="slide-header">
+                <h2 class="slide-title">Calibração e Cinemática</h2>
+                <div class="slide-category">Calibração</div>
+            </div>
+            <div class="slide-content">
+                <div class="text-panel">
+                    <h3>Posicionamento Prático</h3>
+                    <ul>
+                        <li><strong>Modo de Calibração (C):</strong> Calibração manual facilitada por comandos de movimentação individual para cada eixo cartesiano.</li>
+                        <li><strong>Constante de Escala:</strong> Determinação física de 1100 passos totais por casa do tabuleiro.</li>
+                        <li><strong>Resolução de Subgrade:</strong> Coordenadas matriciais escaladas e transmitidas sob fator fixo multiplicador de 275 passos.</li>
+                    </ul>
+                    <div class="highlight-box">
+                        A precisão teórica do conjunto de motores é micrométrica, contudo, folgas físicas nos trilhos e cremalheira definiram uma precisão real de cerca de $2\,\text{mm}$.
+                    </div>
+                </div>
+                <div class="media-panel">
+                    <img src = "imagens/calibracao.jpg" width = "100%">
+                    <p>Pontos que são usados para calibrar a posição da garra.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 21: Resultados Obtidos e Limitações -->
+        <div class="slide" data-theme="light">
+            <div class="slide-header">
+                <h2 class="slide-title">Resultados e Restrições</h2>
+                <div class="slide-category">Resultados</div>
+            </div>
+            <div class="slide-content">
+                <div class="text-panel">
+                    <h3>Prova de Conceito Funcional</h3>
+                    <ul>
+                        <li><strong>Redução da Grade Ativa:</strong> Espaço ocupado por cabos internos e imperfeições em emendas de trilho limitaram o curso mecânico.</li>
+                        <li><strong>Deslocamento Assimétrico:</strong> Centralização da grade de jogo para o canto inferior direito para escapar de fricções excessivas.</li>
+                        <li><strong>Mapeamento Parcial de Descarte:</strong> Descarte do lado das peças pretas capturadas ficou isolado fora da área física acessível.</li>
+                    </ul>
+                </div>
+                <div class="media-panel">
+                    <img src = "imagens/tampa.jpg" width = "85%" style = margin-top:0px>
+                    <img src = "imagens/final.JPG" width = "85%" style = "margin-top:10px">
+                </div>
+            </div>
+        </div>
+        <!-- Slide 22: Conclusão e Próximos Passos (Xadrez V2.0) (Claro) -->
+        <div class="slide" data-theme="light">
+            <div class="slide-header">
+                <h2 class="slide-title">Versões Futuras</h2>
+                <div class="slide-category">FIM</div>
+            </div>
+            <div class="slide-content">
+                <div class="text-panel">
+                    <h3>Possíveis Melhorias</h3>
+                    <ul>
+                        <li><strong>Guias MGN12:</strong> Substituição dos eixos e trilhos impressos em 3D por guias metálicas industriais de alta rigidez.</li>
+                        <li><strong>PCB Integrada:</strong> Remoção completa do emaranhado de jumpers flexíveis por placa de circuito próprio.</li>
+                        <li><strong>Raspeberry Pi:</strong> Substituição do Arduino Uno por um hardware de maior desempenho, eliminando a necessidade de computador externo.</li>
+                    </ul>
+                </div>
+                <div class="media-panel">
+                    <img src ="imagens/mgn9.png" width = "70%">
+                    <p>Guias apropriadas e carrinhos delizantes apropriados</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 23: -->
+        <div class="slide capa" data-theme="dark">
+            <h1>OBRIGADO!</h1>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Lógica de Navegação da Apresentação
+        const viewport = document.getElementById('presentation-viewport');
+        const slides = document.querySelectorAll('.slide');
+        // Adiciona a numeração automaticamente
+        slides.forEach((slide, index) => {
+             if (index === 0) return;
+            const number = document.createElement('div');
+            number.className = 'slide-number';
+            number.textContent = `${index} / ${slides.length - 1}`;
+            slide.appendChild(number);
+        });
+        let currentIndex = 0;
+
+        function updateSlide(index) {
+            slides[currentIndex].classList.remove('active');
+            slides[index].classList.add('active');
+
+            // Alternar tema de cores
+            const currentSlide = slides[index];
+            const isDark = currentSlide.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+                viewport.classList.add('dark-theme');
+            } else {
+                viewport.classList.remove('dark-theme');
+            }
+
+            currentIndex = index;
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                if (currentIndex < slides.length - 1) updateSlide(currentIndex + 1);
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                if (currentIndex > 0) updateSlide(currentIndex - 1);
+            }
+        });
+
+        // Inicializar apresentação
+        updateSlide(0);
+    </script>
+</body>
+</html>
+
+
+        <!-- Slide 21: Conclusão e Próximos Passos (Xadrez V2.0) (Escuro) -->
+        <div class="slide capa" data-theme="dark">
+            <h1>Tabuleiro V2.0</h1>
+            <p>Conclusão e Melhorias de Engenharia Futuras</p>
+            <div class="meta" style="flex-direction: column; gap: 15px; text-align: left; font-family: 'Lora', serif; color: var(--textolight);">
+                <span><i class="fa-solid fa-arrow-right"></i> <strong>Guias MGN12:</strong> Substituição dos eixos e trilhos impressos em 3D por guias metálicas industriais de alta rigidez.</span>
+                <span><i class="fa-solid fa-arrow-right"></i> <strong>PCB Integrada:</strong> Remoção completa do emaranhado de jumpers flexíveis por placa de circuito próprio.</span>
+                <span><i class= "fa-solid fa-arrow-right"></i> <strong>Raspeberry Pi:</strong> Substituição do Arduino Uno por um hardware de maior desempenho, eliminando a necessidade de computador externo.</span>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Lógica de Navegação da Apresentação
+        const viewport = document.getElementById('presentation-viewport');
+        const slides = document.querySelectorAll('.slide');
+        // Adiciona a numeração automaticamente
+        slides.forEach((slide, index) => {
+             if (index === 0) return;
+            const number = document.createElement('div');
+            number.className = 'slide-number';
+            number.textContent = `${index} / ${slides.length - 1}`;
+            slide.appendChild(number);
+        });
+        let currentIndex = 0;
+
+        function updateSlide(index) {
+            slides[currentIndex].classList.remove('active');
+            slides[index].classList.add('active');
+
+            // Alternar tema de cores
+            const currentSlide = slides[index];
+            const isDark = currentSlide.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+                viewport.classList.add('dark-theme');
+            } else {
+                viewport.classList.remove('dark-theme');
+            }
+
+            currentIndex = index;
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                if (currentIndex < slides.length - 1) updateSlide(currentIndex + 1);
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                if (currentIndex > 0) updateSlide(currentIndex - 1);
+            }
+        });
+
+        // Inicializar apresentação
+        updateSlide(0);
+    </script>
+</body>
+</html>
+
+
