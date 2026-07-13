@@ -469,13 +469,10 @@
                 <div class="text-panel">
                     <h3>A* Adaptado</h3>
                     <ul>
-                        <li><strong>TurnPenalizingAStarFinder:</strong> Algoritmo customizado que impõe penalidade a mudanças bruscas de direção.</li>
-                        <li><strong>Movimentação Retilínea:</strong> Força o traçado de caminhos retos e lineares, prevenindo colisões físicas com as bases das peças vizinhas.</li>
+                        <li><strong>TurnPenalizingAStarFinder:</strong> Algoritmo customizado que impõe penalidade a mudanças bruscas de direção, forçando o traçado de caminhos retos e lineares.</li>
+                        <li><strong>Otimização:</strong> Uma etapa subsequente de otimização vetorial elimina nós colineares redundantes, transmitindo ao hardware apenas os vértices das curvas.</li>
                         <li><strong>Deslocamento por Vão:</strong> Trajetória calculada para guiar o atuador exatamente pela linha divisória das casas do tabuleiro.</li>
                     </ul>
-                    <div class="highlight-box">
-                        Uma etapa subsequente de otimização vetorial elimina nós colineares redundantes, transmitindo ao hardware apenas os vértices das curvas.
-                    </div>
                 </div>
                 <div class="media-panel">
                     <img src = "imagens/rota.png" class = "slide-image">
@@ -549,7 +546,7 @@
                     <ul>
                         <li><strong>Regulador de Tensão Linear:</strong> Substitui o stepdown na alimentação do servo.</li>
                         <li><strong>Drivers A4988:</strong> Substituem os LM2209, com custo reduzido e maior disponibilidade no mercado.</li>
-                        <li><strong>Configuração de Microstepping:</strong> Ajuste físico dos pinos dos drivers A4988 para movimentos silenciosos e de alta precisão.</li>
+                        <li><strong>Configuração de Microstepping:</strong> Pinos ms1 e ms2 em high permitem passo de 1/8 do fulllstep.</li>
                         <li><strong>Sinalização do Circuito:</strong> LED para indicar visualmente a atividade do circuito (para evitar manuseio indevido).</li>
                         <li><strong>Bluetooth:</strong> O circuito foi projetado pensando na utilização de um modulo HC-05 para a comunicação com o computador.</li>
                     </ul>
