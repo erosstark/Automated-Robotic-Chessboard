@@ -69,7 +69,7 @@ A arquitetura do software não apresentou dificuldades críticas, visto que as t
 \begin{figure}[htpb]
     \centering
     \includegraphics[width=0.7\textwidth]{imagens/esquematizacao_software.png}
-    \caption{Esquematização da hierarquia e interação dos módulos de software.}
+    \caption{Esquematização da hierarquia dos módulos de software.}
     \label{fig:arq_software}
 \end{figure}
 
@@ -86,7 +86,7 @@ A arquitetura do software não apresentou dificuldades críticas, visto que as t
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{imagens/tabuleiro_matriz.png}
-        \caption{Matriz gerada pelo \texttt{tabuleiro.py}.}
+        \caption{Matriz gerada pelo \texttt{tabuleiro.py}. A hashtag delimita as peças físicas e serve como obstáculo para o algoritmo de caminho.}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.45\textwidth}
@@ -124,7 +124,7 @@ A eletrônica do projeto exigiu modificações em relação à esquematização 
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{imagens/circuito3.jpeg}
-        \caption{Esquematização final atualizada com novos módulos.}
+        \caption{Esquematização final para soldagem.}
     \end{subfigure}
     \caption{Evolução do diagrama eletrônico do projeto.}
     \label{fig:circuitos_esquemas}
@@ -233,10 +233,10 @@ Na ausência de guias lineares metálicas, projetou-se trilhos planos com inclin
 \end{figure}
 
 \begin{itemize}
-    \item \textbf{Problema de Instabilidade Rotacional:} A primeira iteração contava com dois rolamentos no braço superior do carrinho e apenas um no braço inferior. Sob ação da tração da correia, o conjunto sofria deflexão angular e girava facilmente sobre o trilho, travando o sistema. A solução foi redesenhar o carrinho adicionando um segundo rolamento de estabilização na face superior, distribuindo o torque uniformemente (Figura \ref{fig:novo_carrinho}).
+    \item \textbf{Problema de Instabilidade Rotacional:} A primeira iteração contava com um rolamento no braço superior do carrinho e um no braço inferior. Sob ação da tração da correia, o conjunto sofria deflexão angular e girava facilmente sobre o trilho, travando o sistema. A solução foi redesenhar o carrinho adicionando um segundo rolamento de estabilização na face superior.(Figura \ref{fig:novo_carrinho}).
     \item \textbf{Retificação das Barras:} Intercorrências na montagem demonstraram que as barras de $6\,\text{mm}$ acopladas ao carrinho ficavam levemente desalinhadas devido a pequenas imperfeições de impressão dos carrinhos. A solução consistiu na aplicação de enxertos estruturais até atingir um alinhamento tolerável (Figura \ref{fig:eixo_flutuante})..
-    \item \textbf{Descontinuidades de Impressão:} O comprimento total do tabuleiro excedia o volume útil de impressão da máquina disponível. Os trilhos precisaram ser seccionados em duas partes e colados manualmente. Apesar do lixamento, a pequena descontinuidade na junção das partes coladas atuava como um obstáculo geométrico onde os rolamentos colidiam e travavam.
-    \item \textbf{Imprecisão Dimensional das Paredes:} Pequenas variações milimétricas no paralelismo das paredes de MDF empurravam os carrinhos para dentro ou para fora. Como os carrinhos eram rigidamente acoplados à barra transversal de ferro, qualquer aproximação das paredes causava compressão excessiva nos trilhos, paralisando os motores.
+    \item \textbf{Descontinuidades de Impressão:} O comprimento total do trilho excedia o volume útil de impressão da máquina disponível. Os trilhos precisaram ser seccionados em duas partes e colados manualmente. Apesar do lixamento, a pequena descontinuidade na junção das partes coladas atuava como um obstáculo geométrico onde os rolamentos colidiam e travavam.
+    \item \textbf{Imprecisão Dimensional das Paredes:} Pequenas variações milimétricas no paralelismo das paredes de MDF empurravam os carrinhos para dentro ou para fora. Como os carrinhos eram rigidamente acoplados à barra transversal de ferro, qualquer aproximação das paredes causava compressão excessiva nos trilhos, travando o movimento.
     \item \textbf{Solução Implementada (Eixo Flutuante):} Para resolver o travamento por variação de largura, eliminou-se a restrição rígida de uma das extremidades da barra de ferro transversal. Ela passou a operar como um ``eixo flutuante'', livre para deslizar para dentro ou para fora do encaixe do carrinho conforme a distância entre as paredes variava. Essa folga geométrica sanou os travamentos por compressão, porém introduziu uma perda de rigidez estrutural: a barra passou a flexionar sob torção, gerando um novo vetor de torque que limitou a movimentação nas proximidades dos carrinhos dotados de eixo flutuante. 
 \end{itemize}
 
@@ -287,7 +287,7 @@ A carcaça externa foi cortada em MDF de 6mm utilizando uma cortadora a laser (F
 \end{figure}
 
 \subsection{Mapeamento Físico e Peças do Jogo}
-As peças foram desenhadas e impressas com dimensões que permitissem a passagem livre entre as demais casas ocupadas. Por serem leves demais, os campos magnéticos parasitas de componentes vizinhos provocavam atração mútua e tombamentos. Para contornar esse problema, as peças foram confeccionadas em impressão 3D contendo uma cavidade cilíndrica interna projetada para abrigar um parafuso de aço Allen M6. A cabeça sextavada do parafuso forneceu o diâmetro e a profundidade ideais para embutir um pequeno ímã de neodímio de $4\,\text{mm} \times 2\,\text{mm}$ (Figura \ref{fig:pecas}). O peso do parafuso metálico aumentou a inércia gravitacional das peças, neutralizando as forças de atração lateral e conferindo estabilidade tátil durante o movimento, além de agregar uma identidade estética agradável ao conjunto.
+As peças foram desenhadas e impressas com dimensões que permitissem a passagem livre entre as demais casas ocupadas. Por serem leves demais, os campos magnéticos parasitas de componentes vizinhos provocavam atração mútua e tombamentos. Para contornar esse problema, as peças foram confeccionadas em impressão 3D contendo uma cavidade cilíndrica interna projetada para abrigar um parafuso de aço Allen M6. A cabeça sextavada do parafuso forneceu o diâmetro e a profundidade ideais para embutir um pequeno ímã de neodímio de $4\,\text{mm} \times 2\,\text{mm}$ (Figura \ref{fig:pecas}). O peso do parafuso metálico aumentou a inércia gravitacional das peças, neutralizando as forças de atração lateral e conferindo estabilidade durante o movimento, além de agregar uma identidade estética agradável ao conjunto.
 
 \begin{figure}[htpb]
     \centering
@@ -319,7 +319,7 @@ Devido ao espaço interno reduzido ocupado por jumpers não planejados e às lim
 Dado que o projeto em si constitui o resultado prático avaliado, descrevem-se a seguir as especificações técnicas consolidadas do protótipo construído:
 
 \begin{itemize}
-    \item \textbf{Área Total:} Estrutura externa em MDF de $400 \times 400 \times 73\,\text{mm}$. Superfície superior composta por uma chapa de acrílico translúcido de 3mm, permitindo a visualização interna dos eixos em operação.
+    \item \textbf{Área Total:} Estrutura externa em MDF de $400 \times 400 \times 6\,\text{mm}$. Superfície superior composta por uma chapa de acrílico translúcido de 3mm, permitindo a visualização interna dos eixos em operação.
     \item \textbf{Calibração Inicial:} A calibração é feita manualmente através do comando serial \texttt{C}, que permite enviar instruções de movimentação para cada eixo individualmente. A tampa do tabuleiro possui três marcações, sendo uma central para referência de origem (\textit{Home}) (Figura \ref{fig:calibracao}). A utilização das três marcações permite a definição exata do número de passos por casa do tabuleiro.
     \item \textbf{Resolução de Movimento:} Controlado por motores NEMA 17 (1.8° por passo) operando sob subpassos eletrônicos de $1/8$ via pinos de \textit{microstepping} configurados em nível lógico alto (\lstinline{HIGH}) nos drivers A4988. A calibração prática determinou a constante de transferência de 1100 passos por casa do tabuleiro. Como cada casa é dividida em 4 elementos $a_{ij}$ da matriz interna, as coordenadas passadas para o Arduino são multiplicadas por \lstinline{STEPS_PER_SQUARE = 275}. A precisão teórica do movimento das peças é micrométrica devido ao \textit{microstepping} dos motores (1600 passos por volta), mas as folgas mecânicas nos trilhos e na cremalheira (Figura \ref{fig:gap}) limitam a precisão prática do sistema a alguns milímetros. 
     \item \textbf{Controle da Cinemática:} Operação em malha aberta estabilizada com velocidade máxima de translação parametrizada em $5000\,\text{Hz}$ (frequência de pulsos) e aceleração de $10000\,\text{Hz/s}^2$ através do algoritmo de rampa trapezoidal da biblioteca \texttt{FastAccelStepper}. Quando ocorrem trajetórias diagonais ou combinadas, o firmware calcula dinamicamente uma redução proporcional de velocidade no eixo de menor deslocamento espacial ($\Delta X$ ou $\Delta Y$), viabilizando deslocamentos diagonais síncronos.
@@ -362,7 +362,7 @@ Como propostas de aperfeiçoamento para futuras versões que visem transformar o
 \begin{enumerate}
     \item Substituição integral dos trilhos e carrinhos impressos em 3D por guias lineares comerciais metálicas com patins baseados em recirculação de esferas (ex: guias MGN12), eliminando deformações por torque e folgas mecânicas;
     \item Redesenho tridimensional da carcaça interna com canais dedicados para gerenciamento de fiação e inclusão de uma placa de circuito impresso (PCB) própria, eliminando o emaranhado de jumpers flexíveis para liberar o curso total dos eixos mecânicos;
-    \item Implementação de um sistema de detecção de fim de curso por chaves ópticas ou mecânicas para habilitar rotinas automáticas de calibração;
+    \item Implementação de um sistema de detecção de fim de curso para habilitar rotinas automáticas de calibração;
     \item Utilização de microcontroladores menores e mais potentes, como o ESP32, que possui conectividade Bluetooth integrada e estável, eliminando a necessidade de comunicação cabeada via USB; ou, alternativamente, a utilização de hardware embarcado de alto desempenho capaz de rodar os modelos locais de reconhecimento de voz e o motor de xadrez localmente, eliminando a dependência de um computador externo.
 \end{enumerate}
 
