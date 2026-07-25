@@ -3,5 +3,5 @@
 An automated, self-playing robotic chessboard that moves pieces autonomously and
 tracks gameplay in real-time. The system utilizes a hidden motorized gantry with
 magnets to move the pieces.
-
-[![Demonstração](20260710_163839.jpg)](https://www.youtube.com/shorts/LDl5fLyFWHE)
+[![Final](20260710_163839.jpg)]
+[![Demonstração]](https://www.youtube.com/shorts/LDl5fLyFWHE)
